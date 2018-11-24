@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="pl">
+
+<head>
+    <meta charset="utf-8">
+    <title>Zjprog - Emilia Wąż</title>
+    <meta name="description" content="Zaawansowane języki programowania">
+    <meta name="author" content="Emilia Wąż">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,700&amp;subset=latin-ext" rel="stylesheet">
+    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js?lang=js&amp;skin=desert"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Gilded Rose Kata - Emilia Wąż</h1>
+        </div>
+        <div class="content">
+            <div class="text-wrapper">
+                <ul class="">
+                    <li>
+                        <h2>1. Testy</h2>
+                        <p>Język: JavaScript</p>
+                        <p>Łączna ilość testów: 12</p>
+                        <pre class="prettyprint lang-js">
+/* AGED BRIE */
+it("increases the quality of Aged Brie", function () {
+    var shop = new Shop([new Item("Aged Brie", 3, 2)]);
+    items = shop.updateQuality();
+
+    expect(items[0].sellIn).toBe(2);
+    expect(items[0].quality).toBe(3);
+});
+
+it("does not increase quality of Aged Brie over 50", function () {
+    var shop = new Shop([new Item('Aged Brie', 10, 50)]);
+    items = shop.updateQuality();
+
+    expect(items[0].sellIn).toBe(9);
+    expect(items[0].quality).toBe(50);
+});
+                        </pre>
+                        <p>Wynik testów:</p>
+                        <pre class="prettyprint">
+$ npm test
+
+> gilded-rose@1.0.0 test C:\Ug\zjprog\jasmine
+> jasmine
+
+Randomized with seed 60194
+Started
+....FF......
+
+Failures:
+1) Gilded Rose decreases the quality of Conjured item twice when sellIn <= 0
+    Message:
+    Expected 18 to be 16.
+    Stack:
+    Error: Expected 18 to be 16.
+        at <Jasmine>
+        at UserContext.<anonymous> (C:\Ug\zjprog\jasmine\spec\GildedRoseSpec.js:85:30)
+        at <Jasmine>
+
+2) Gilded Rose decreases the quality of Conjured item twice when sellIn > 0
+    Message:
+    Expected 5 to be 4.
+    Stack:
+    Error: Expected 5 to be 4.
+        at <Jasmine>
+        at UserContext.<anonymous> (C:\Ug\zjprog\jasmine\spec\GildedRoseSpec.js:77:30)
+        at <Jasmine>
+
+12 specs, 2 failures
+Finished in 0.019 seconds
+Randomized with seed 60194 (jasmine --random=true --seed=60194)
+npm ERR! Test failed.  See above for more details.
+                        </pre>
+                        <p>Produkty typu magicznego nie są obsługiwane.</p>
+                    </li>
+                    <li>
+                        <h2>2. Złożoność</h2>
+                        <p></p>
+                        <pre class="prettyprint">
+$ cr original
+Mean per-function logical LOC: 3
+Mean per-function parameter count: 0
+Mean per-function cyclomatic complexity: 1
+Mean per-function Halstead effort: 106.5094800484617
+Mean per-module maintainability index: 137.23712065818867
+First-order density: 0%
+Change cost: 100%
+Core size: 0%
+
+Physical LOC: 66
+Logical LOC: 3
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 33.33333333333333%
+Maintainability index: 137.23712065818867
+Dependency count: 0
+                    </pre>
+                        <p>Raport:</p>
+                        <a href="assets/files/report-original/index.html" target="_blank">Plato raport original</a>
+                        <p>Lines of code: 66</p>
+                        <p>Logical lines of code: 3</p>
+                        <p>Halstead effort: 106.5094800484617</p>
+                        <p>Maintainability index: 137.23712065818867</p>
+                        <p>Change cost: 100%</p>
+                        <p>Cyclomatic complexity: 1</p>
+                        <p>Plato - Maintainability: 55.33</p>
+
+                        <p><strong>Maintainability</strong> - łatwość utrzymania. Wartość proporcjonalna do ilości czasu potrzebnego developerowi/programiście żeby zmienić fragment kodu wraz z ryzykiem że zmiana ta może zaburzyć działanie innego fragmentu kodu. Im wyższa wartość, tym lepiej.</p>
+                        <p><strong>Halstead effort</strong> - określa wysiłek wymagany do opracowania lub utrzymania programu. Im niższa wartość, tym łatwiej modyfikować program.</p>
+                        <p><strong>Cyclomatic complexity</strong> - "liczba decyzji, które musi wykonać dany blok
+                            kodu".
+                            Większość języków zapewnia konstrukcje takie jak if, while itd. dla punktów "decyzji".
+                            complexity-report skala:
+                            -metody 1-10 proste do zrozumienia
+                            -metody 10-20 bardziej złożony kod, testowanie jest trudniejsze
+                            -metody powyżej 20 są typowe dla kodu z dużą ilością potencjalnych ścieżek wykonania, może
+                            być w pełni zrozumiany i przetestowany tylko z dużą trudnością i wysiłkiem
+                            -metody powyżej 50 są uznawane za niemożliwe do utrzymania.
+                        </p>
+                    </li>
+                    <li>
+                        <h2>3. Kod</h2>
+                        <p>Aby obsługa przedmiotów magicznych działała, wystarczyło dodać kolejny if w dwóch miejscach:</p>
+                        <pre class="prettyprint">
+if(this.items[i].name == 'Conjured Mana Cake') {
+    this.items[i].quality = this.items[i].quality - 2;
+}
+                        </pre>
+                    </li>
+                    <li>
+                        <h2>4. Refaktoryzacja</h2>
+                        <p>Atomizacja elementów.</p>
+                        <p>Struktura plików przed refaktoryzacją:</p>
+                        <img src="assets/img/original-structure.jpg"/>
+                        <p>Struktura plików po refaktoryzacji:</p>
+                        <img src="assets/img/fixed-structure.jpg"/>
+                        <p>updateQuality() zostało skrócone. Map wykonuje funkcję raz na każdym z elementów tablicy w kolejności i tworzy nową tablicę na podstawie wyników. Elementy są przekazywane do ItemFactory.</p>
+                        <pre class="prettyprint">
+class Shop {
+    constructor(items = []) {
+        this.items = items;
+    }
+    
+    updateQuality() {
+        this.items
+        .map(ItemFactory.createItem);
+    
+        return this.items;
+    }
+}
+                        </pre>
+                        <p>Klasa ItemFactory tworzy nowe obiekty na podstawie nazw przedmiotów.</p>
+                        <pre class="prettyprint">
+class ItemFactory {
+    static createItem(item) {
+        if (item.name.includes('Aged Brie')) {
+        return new AgedBrieItem(item);
+        } else if (item.name.includes('Sulfuras, Hand of Ragnaros')) {
+        return new SulfurasItem(item);
+        } else if (item.name.includes('Backstage passes to a TAFKAL80ETC concert')) {
+        return new BackstagePassItem(item);
+        } else if (item.name.includes('Conjured')) {
+            return new ConjuredItem(item);
+        } else {
+        return new RegularItem(item);
+        }
+    }
+ }
+                        </pre>
+                        <p>Na koniec klasa konkretnego obiektu wykonuje updateQuality według potrzeb.</p>
+                        <pre class="prettyprint">
+class AgedBrieItem {
+    constructor(item) {
+        this.item = item;
+        this.updateQuality();
+    }
+    
+    updateQuality() {
+        let qualityFifty = this.item.quality === 50;
+    
+        this.item.sellIn -= 1;
+    
+        if (qualityFifty) return;
+        this.item.quality += 1;
+    }
+}
+                        </pre>
+                    </li>
+                    <li>
+                        <h2>5. Testy</h2>
+                        <p>Wynik testów:</p>
+                        <pre class="prettyprint">
+$ npm test
+
+> gilded-rose@1.0.0 test C:\Ug\zjprog\jasmine
+> jasmine
+
+Randomized with seed 64854
+Started
+............
+
+
+12 specs, 0 failures
+Finished in 0.029 seconds
+Randomized with seed 64854 (jasmine --random=true --seed=64854)
+                        </pre>
+                        <p>Produkty typu magicznego są obsługiwane.</p>
+                    </li>
+                    <li>
+                        <h2>6. Złożoność</h2>
+                        <pre class="prettyprint">
+$ cr fixed
+Mean per-function logical LOC: 2
+Mean per-function parameter count: 0
+Mean per-function cyclomatic complexity: 1
+Mean per-function Halstead effort: 87.74344377691465
+Mean per-module maintainability index: 153.36916291010306
+First-order density: 0%
+Change cost: 12.5%
+Core size: 0%
+
+C:\Ug\zjprog\jasmine\src\fixed\AgedBrieItem.js
+
+Physical LOC: 17
+Logical LOC: 1
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 100%
+Maintainability index: 162.61472146706737
+Dependency count: 0
+
+C:\Ug\zjprog\jasmine\src\fixed\BackstagePassItem.js
+
+Physical LOC: 26
+Logical LOC: 1
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 100%
+Maintainability index: 162.61472146706737
+Dependency count: 0
+
+C:\Ug\zjprog\jasmine\src\fixed\ConjuredItem.js
+
+Physical LOC: 22
+Logical LOC: 1
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 100%
+Maintainability index: 162.61472146706737
+Dependency count: 0
+
+C:\Ug\zjprog\jasmine\src\fixed\GildedRose.js
+
+Physical LOC: 26
+Logical LOC: 4
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 25%
+Maintainability index: 129.56423828475548
+Dependency count: 1
+
+C:\Ug\zjprog\jasmine\src\fixed\Item.js
+
+Physical LOC: 9
+Logical LOC: 1
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 100%
+Maintainability index: 162.61472146706737
+Dependency count: 0
+
+C:\Ug\zjprog\jasmine\src\fixed\ItemFactory.js
+
+Physical LOC: 23
+Logical LOC: 6
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 16.666666666666664%
+Maintainability index: 121.70073619366497
+Dependency count: 5
+
+C:\Ug\zjprog\jasmine\src\fixed\RegularItem.js
+
+Physical LOC: 22
+Logical LOC: 1
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 100%
+Maintainability index: 162.61472146706737
+Dependency count: 0
+
+C:\Ug\zjprog\jasmine\src\fixed\SulfurasItem.js
+
+Physical LOC: 15
+Logical LOC: 1
+Mean parameter count: 0
+Cyclomatic complexity: 1
+Cyclomatic complexity density: 100%
+Maintainability index: 162.61472146706737
+Dependency count: 0
+                        </pre>
+                        <p>Raport:</p>
+                        <a href="assets/files/report-fixed/index.html" target="_blank">Plato raport fixed</a>
+                        <p>Lines of code: 161 - więcej(gorzej)</p>
+                        <p>Logical lines of code: 2 - mniej(gorzej)</p>
+                        <p>Halstead effort: 87.74344377691465 - mniej(lepiej)</p>
+                        <p>Maintainability index: 153.36916291010306 - więcej(lepiej)</p>
+                        <p>Change cost: 12.5% - mniej(lepiej) 8 plików</p>
+                        <p>Cyclomatic complexity: 1 - tyle samo</p>
+                        <p>Plato - Maintainability: 72.12 - więcej(lepiej)</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

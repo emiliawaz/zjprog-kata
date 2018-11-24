@@ -1,0 +1,50 @@
+body {
+    background-color: #87756e;
+    font-family: 'Nunito', sans-serif;
+}
+
+h1 {
+    color: #87ceeb;
+    margin: 1.5em;
+}
+
+p, a { 
+    font-size: 20px;
+}
+
+a {
+    color: #00add6;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    list-style: none;
+    margin: 3em 0;
+}
+
+img {
+    max-width: 100%;
+    margin-bottom: 2em;
+}
+
+.header {
+    text-align: center;
+}
+
+.text-wrapper {
+    width: 65%;
+    margin: auto;
+    background-color: #f7f7f7;
+    padding: 2em 4em;
+    border-radius: 1.5em;
+}
+
+pre.prettyprint {
+    padding: 2em;
+    overflow-x: scroll;
+    font-size: 16px;
+}
