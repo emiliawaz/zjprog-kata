@@ -1,25 +1,26 @@
-const ItemFactory = require('./ItemFactory');
+const ItemFactory = require('./ItemFactory')
 
 class Item {
   constructor(name, sellIn, quality) {
-    this.name = name;
-    this.sellIn = sellIn;
-    this.quality = quality;
+    this.name = name
+    this.sellIn = sellIn
+    this.quality = quality
   }
 }
 
 class Shop {
   constructor(items = []) {
-    this.items = items;
+    this.items = items
   }
 
   updateQuality() {
     this.items
-      .map(ItemFactory.createItem);
+      .map(ItemFactory.createItem)
 
-    return this.items;
+    return this.items
   }
 }
+
 module.exports = {
   Shop,
   Item
