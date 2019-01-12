@@ -1,5 +1,6 @@
 let { Shop, Item } = require('../src/original/GildedRose')
 //let { Shop, Item } = require('../src/fixed/GildedRose')
+//let { Shop, Item } = require('../src/test/GildedRose')
 
 describe('Gilded Rose', () => {
   let item,

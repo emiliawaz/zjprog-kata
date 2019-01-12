@@ -25,21 +25,105 @@
                         <p>Łączna ilość testów: 12</p>
                         <pre class="prettyprint lang-js">
 /* AGED BRIE */
-it("increases the quality of Aged Brie", function () {
-    var shop = new Shop([new Item("Aged Brie", 3, 2)]);
-    items = shop.updateQuality();
+it('increases the quality of Aged Brie', () => {
+    let shop = new Shop([new Item('Aged Brie', 3, 2)])
+    items = shop.updateQuality()
 
-    expect(items[0].sellIn).toBe(2);
-    expect(items[0].quality).toBe(3);
-});
+    expect(items[0].sellIn).toBe(2)
+    expect(items[0].quality).toBe(3)
+})
 
-it("does not increase quality of Aged Brie over 50", function () {
-    var shop = new Shop([new Item('Aged Brie', 10, 50)]);
-    items = shop.updateQuality();
+it('does not increase quality of Aged Brie over 50', () => {
+    let shop = new Shop([new Item('Aged Brie', 10, 50)])
+    items = shop.updateQuality()
 
-    expect(items[0].sellIn).toBe(9);
-    expect(items[0].quality).toBe(50);
-});
+    expect(items[0].sellIn).toBe(9)
+    expect(items[0].quality).toBe(50)
+})
+
+/* BACKSTAGE PASSES */
+it('increases the quality of Backstage passes', () => {
+    let shop = new Shop([new Item('Backstage passes to a TAFKAL80ETC concert', 12, 20)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(11)
+    expect(items[0].quality).toBe(21)
+})
+
+it('increases the quality of Backstage passes twice when sellIn <= 10', () => {
+    let shop = new Shop([new Item('Backstage passes to a TAFKAL80ETC concert', 10, 20)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(9)
+    expect(items[0].quality).toBe(22)
+})
+
+it('increases the quality of Backstage passes triply when sellIn <= 5', () => {
+    let shop = new Shop([new Item('Backstage passes to a TAFKAL80ETC concert', 5, 20)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(4)
+    expect(items[0].quality).toBe(23)
+})
+
+it('decreases the quality of Backstage passes to 0 after concert', () => {
+    let shop = new Shop([new Item('Backstage passes to a TAFKAL80ETC concert', 0, 20)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(-1)
+    expect(items[0].quality).toBe(0)
+})
+
+it('does not increase quality of Backstage Pass over 50', () => {
+    let shop = new Shop([new Item('Aged Brie', 10, 50)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(9)
+    expect(items[0].quality).toBe(50)
+})
+
+/* CONJURED ITEM */
+it('decreases the quality of Conjured item twice when sellIn > 0', () => {
+    let shop = new Shop([new Item('Conjured Mana Cake', 3, 6)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(2)
+    expect(items[0].quality).toBe(4)
+})
+
+it('decreases the quality of Conjured item twice when sellIn <= 0', () => {
+    let shop = new Shop([new Item('Conjured Mana Cake', 0, 20)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(-1)
+    expect(items[0].quality).toBe(16)
+})
+
+/* REGULAR ITEM */
+it('decreases the quality of Regular item when sellIn > 0', () => {
+    let shop = new Shop([new Item('+5 Dexterity Vest', 10, 20)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(9)
+    expect(items[0].quality).toBe(19)
+})
+
+it('decreases the quality of regular item when sellIn <= 0', () => {
+    let shop = new Shop([new Item('Elixir of the Mongoose', 0, 7)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(-1)
+    expect(items[0].quality).toBe(5)
+})
+
+/* SULFURAS */
+it('does not change the quality of Sulfuras', () => {
+    let shop = new Shop([new Item('Sulfuras, Hand of Ragnaros', 0, 80)])
+    items = shop.updateQuality()
+
+    expect(items[0].sellIn).toBe(0)
+    expect(items[0].quality).toBe(80)
+})
                         </pre>
                         <p>Wynik testów:</p>
                         <pre class="prettyprint">
@@ -133,7 +217,136 @@ if(this.items[i].name == 'Conjured Mana Cake') {
                         </pre>
                     </li>
                     <li>
-                        <h2>4. Refaktoryzacja</h2>
+                        <h2>4. Zasady i wzorce.</h2>
+                        <p>Zasady stosowane podczas refaktoryzacji:</p>
+                        <ul>
+                            <li class="small">SOLID<br>
+                                -Single responsibility<br>
+                                -Open–closed<br>
+                                -Liskov substitution<br>
+                                -Interface segregation<br>
+                                -Dependency inversion<br>
+                            </li>
+                            <li class="small">DRY - Don't Repeat Yourself</li>
+                            <li class="small">Unikanie if</li>
+                            <li class="small">Factory design pattern(Metoda wytwórcza)</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <h2>5. Refaktoryzacja</h2>
+                        <ul>
+                            <li class="small">SOLID<br>
+                                -Single responsibility - jedna funkcja zmieniona na wiele klas zawierających  funkcję odpowiadającą za aktualizację stanu konkretnego produktu.<br>
+                                -Open–closed - każda klasa posiada funkcję updateQuality i może być łatwo rozszerzona o więcej funkcji.<br>
+                                -Liskov substitution(Zasada podstawienia Liskov) - zasada nie jest łamana ze względu na brak możliwości edycji klasy bazoej Item.<br>
+                            </li>
+                            <li class="small">Unikanie if - instrukcje if zostały zastąpione np. operatorami potrójnymi. Nie udało się zupełnie uniknąć ich używania.</li>
+                            <li class="small">Factory design pattern(Metoda wytwórcza) - wzorzec został wybrany ze względu na dużą ilość rodzajów przedmiotów i ich rozróżnianie przez nazwę.</li>
+                        </ul>
+                        <p>Testowanie rozwiązania dla Aged Brie < 50, klasa AgedBrie i ItemFactory.</p>
+                        <p>Struktura plików:</p>
+                        <img src="assets/img/test-structure.jpg"/>
+                        <p>Kod:</p>
+                        <pre class="prettyprint">
+if (this.items[i].name != 'Aged Brie') {
+    if (this.items[i].name != 'Backstage passes to a TAFKAL80ETC concert') {
+        if (this.items[i].quality > 0) {
+        if (this.items[i].name != 'Sulfuras, Hand of Ragnaros') {
+            this.items[i].quality = this.items[i].quality - 1;
+        }
+        }
+    } else {
+        this.items[i].quality = this.items[i].quality - this.items[i].quality;
+    }
+} else {
+    if (this.items[i].quality < 50) {
+        /* TEST FOR AGED BRIE */
+        this.items
+        .map(ItemFactory.createItem)
+    }
+}
+                        </pre>
+                        <p>Wynik testów:</p>
+                        <pre class="prettyprint">
+$ npm test
+
+> gilded-rose@1.0.0 test C:\ug\zjprog-kata\jasmine
+> jasmine
+
+Randomized with seed 94135
+Started
+..F.F.......
+
+Failures:
+1) Gilded Rose decreases the quality of Conjured item twice when sellIn > 0
+    Message:
+    Expected 5 to be 4.
+    Stack:
+    Error: Expected 5 to be 4.
+        at <Jasmine>
+        at UserContext.it (C:\ug\zjprog-kata\jasmine\spec\GildedRoseSpec.js:77:30)
+        at <Jasmine>
+
+2) Gilded Rose decreases the quality of Conjured item twice when sellIn <= 0
+    Message:
+    Expected 18 to be 16.
+    Stack:
+    Error: Expected 18 to be 16.
+        at <Jasmine>
+        at UserContext.it (C:\ug\zjprog-kata\jasmine\spec\GildedRoseSpec.js:85:30)
+        at <Jasmine>
+
+12 specs, 2 failures
+Finished in 0.021 seconds
+Randomized with seed 94135 (jasmine --random=true --seed=94135)
+npm ERR! Test failed.  See above for more details.
+
+                        </pre>
+                        <p>Wynik pozostał taki sam, co pozwoliło na rozszerzanie wybranego rozwiązania o kolejne klasy.</p>
+                        <p>Złożoność:</p>
+                        <pre class="prettyprint">
+$ cr test
+Mean per-function logical LOC: 3.3333333333333335
+Mean per-function parameter count: 0
+Mean per-function cyclomatic complexity: 1
+Mean per-function Halstead effort: 164.4707902175689
+Mean per-module maintainability index: 140.517526106307
+First-order density: 0%
+Change cost: 33.33333333333333%
+Core size: 0%
+
+C:\ug\zjprog-kata\jasmine\src\test\AgedBrieItem.js
+
+  Physical LOC: 18
+  Logical LOC: 1
+  Mean parameter count: 0
+  Cyclomatic complexity: 1
+  Cyclomatic complexity density: 100%
+  Maintainability index: 162.61472146706737
+  Dependency count: 0
+
+C:\ug\zjprog-kata\jasmine\src\test\GildedRose.js
+
+  Physical LOC: 68
+  Logical LOC: 3
+  Mean parameter count: 0
+  Cyclomatic complexity: 1
+  Cyclomatic complexity density: 33.33333333333333%
+  Maintainability index: 137.23712065818867
+  Dependency count: 0
+
+C:\ug\zjprog-kata\jasmine\src\test\ItemFactory.js
+
+  Physical LOC: 15
+  Logical LOC: 6
+  Mean parameter count: 0
+  Cyclomatic complexity: 1
+  Cyclomatic complexity density: 16.666666666666664%
+  Maintainability index: 121.70073619366497
+  Dependency count: 5
+                        </pre>
+                        <p>Maintainability zwiększyło się o kilka punktów.</p>
+                        <br>
                         <p>Atomizacja elementów.</p>
                         <p>Struktura plików przed refaktoryzacją:</p>
                         <img src="assets/img/original-structure.jpg"/>
@@ -141,58 +354,181 @@ if(this.items[i].name == 'Conjured Mana Cake') {
                         <img src="assets/img/fixed-structure.jpg"/>
                         <p>updateQuality() zostało skrócone. Map wykonuje funkcję raz na każdym z elementów tablicy w kolejności i tworzy nową tablicę na podstawie wyników. Elementy są przekazywane do ItemFactory.</p>
                         <pre class="prettyprint">
+const ItemFactory = require('./ItemFactory')
+
+class Item {
+    constructor(name, sellIn, quality) {
+    this.name = name
+    this.sellIn = sellIn
+    this.quality = quality
+    }
+}
+
 class Shop {
     constructor(items = []) {
-        this.items = items;
+    this.items = items
     }
-    
+
     updateQuality() {
-        this.items
-        .map(ItemFactory.createItem);
-    
-        return this.items;
+    this.items
+        .map(ItemFactory.createItem)
+
+    return this.items
     }
+}
+
+module.exports = {
+    Shop,
+    Item
 }
                         </pre>
                         <p>Klasa ItemFactory tworzy nowe obiekty na podstawie nazw przedmiotów.</p>
                         <pre class="prettyprint">
+const AgedBrieItem = require('./AgedBrieItem')
+const BackstagePassItem = require('./BackstagePassItem')
+const ConjuredItem = require('./ConjuredItem')
+const RegularItem = require('./RegularItem')
+const SulfurasItem = require('./SulfurasItem')
+
 class ItemFactory {
     static createItem(item) {
         if (item.name.includes('Aged Brie')) {
-        return new AgedBrieItem(item);
+            return new AgedBrieItem(item)
         } else if (item.name.includes('Sulfuras, Hand of Ragnaros')) {
-        return new SulfurasItem(item);
+            return new SulfurasItem(item)
         } else if (item.name.includes('Backstage passes to a TAFKAL80ETC concert')) {
-        return new BackstagePassItem(item);
+            return new BackstagePassItem(item)
         } else if (item.name.includes('Conjured')) {
-            return new ConjuredItem(item);
+            return new ConjuredItem(item)
         } else {
-        return new RegularItem(item);
+            return new RegularItem(item)
         }
     }
- }
+}
+
+module.exports = ItemFactory
                         </pre>
                         <p>Na koniec klasa konkretnego obiektu wykonuje updateQuality według potrzeb.</p>
+                        <p>Instrukcje warunkowe dla każdego rodzaju produktu zostały zastąpione klasami dedykowanymi konkretnym przedmiotom.</p>
+                        <p>Ograniczeniem była klasa Item, której nie można było edytować.</p>
+                        <p>Aby uniknąć instrukcji if, zostały one zastąpione operatorami potrójnymi.</p>
                         <pre class="prettyprint">
 class AgedBrieItem {
     constructor(item) {
-        this.item = item;
-        this.updateQuality();
+        this.item = item
+        this.updateQuality()
     }
     
     updateQuality() {
-        let qualityFifty = this.item.quality === 50;
+        let qualityFifty = this.item.quality === 50
     
-        this.item.sellIn -= 1;
+        this.item.sellIn -= 1
     
-        if (qualityFifty) return;
-        this.item.quality += 1;
+        if (qualityFifty) return
+    
+        this.item.quality += 1
     }
 }
+
+module.exports = AgedBrieItem
                         </pre>
+                        <pre class="prettyprint">
+class BackstagePassItem {
+    constructor(item) {
+        this.item = item
+        this.updateQuality()
+    }
+    
+    updateQuality() {
+        let qualityZero = this.item.sellIn <= 0,
+        qualityOne = this.item.sellIn > 10,
+        qualityTwo = this.item.sellIn > 5 && this.item.sellIn <= 10,
+        qualityThree = this.item.sellIn > 0 && this.item.sellIn <= 5,
+        qualityFifty = this.item.quality === 50,
+        qualityEquals = this.item.quality = this.item.quality
+    
+        this.item.sellIn -= 1
+    
+        if (qualityFifty) return
+    
+        qualityZero ? this.item.quality = 0 : qualityEquals
+        qualityOne ? this.item.quality += 1 : qualityEquals
+        qualityTwo ? this.item.quality += 2 : qualityEquals
+        qualityThree ? this.item.quality += 3 : qualityEquals
+    }
+}
+
+module.exports = BackstagePassItem
+</pre>
+<pre class="prettyprint">
+class ConjuredItem {
+    constructor(item) {
+        this.item = item
+        this.updateQuality()
+    }
+    
+    updateQuality() {
+        let qualityTwo = this.item.sellIn > 0,
+        qualityFour = this.item.sellIn <= 0,
+        qualityFifty = this.item.quality === 50,
+        qualityEquals = this.item.quality = this.item.quality
+    
+        this.item.sellIn -= 1
+    
+        if (qualityFifty) return
+    
+        qualityTwo ? this.item.quality -= 2 : qualityEquals
+        qualityFour ? this.item.quality -= 4 : qualityEquals
+    }
+}
+
+module.exports = ConjuredItem
+                        </pre>
+                        <pre class="prettyprint">
+class RegularItem {
+    constructor(item) {
+        this.item = item
+        this.updateQuality()
+    }
+    
+    updateQuality() {
+        let qualityOne = this.item.sellIn > 0,
+        qualityTwo = this.item.sellIn <= 0,
+        qualityFifty = this.item.quality === 50,
+        qualityEquals = this.item.quality = this.item.quality
+    
+        this.item.sellIn -= 1
+    
+        if (qualityFifty) return
+    
+        qualityOne ? this.item.quality -= 1 : qualityEquals
+        qualityTwo ? this.item.quality -= 2 : qualityEquals
+    }
+}
+
+module.exports = RegularItem
+                        </pre>
+                    <pre class="prettyprint">
+class SulfurasItem {
+    constructor(item) {
+        this.item = item
+        this.updateQuality()
+    }
+    
+    updateQuality() {
+        let sellInZero = this.item.sellIn === 0
+    
+        sellInZero ? this.item.sellIn = 0 : this.item.sellIn = this.item.sellIn
+    
+        this.item.quality = 80
+    }
+}
+
+module.exports = SulfurasItem
+                                                </pre>
                     </li>
                     <li>
-                        <h2>5. Testy</h2>
+                        <h2>6. Testy</h2>
                         <p>Wynik testów:</p>
                         <pre class="prettyprint">
 $ npm test
@@ -212,105 +548,96 @@ Randomized with seed 64854 (jasmine --random=true --seed=64854)
                         <p>Produkty typu magicznego są obsługiwane.</p>
                     </li>
                     <li>
-                        <h2>6. Złożoność</h2>
+                        <h2>7. Złożoność</h2>
                         <pre class="prettyprint">
 $ cr fixed
-Mean per-function logical LOC: 2
+Mean per-function logical LOC: 2.142857142857143
 Mean per-function parameter count: 0
 Mean per-function cyclomatic complexity: 1
-Mean per-function Halstead effort: 87.74344377691465
-Mean per-module maintainability index: 153.36916291010306
+Mean per-function Halstead effort: 98.61970139155434
+Mean per-module maintainability index: 152.04836883053673
 First-order density: 0%
-Change cost: 12.5%
+Change cost: 14.285714285714285%
 Core size: 0%
 
-C:\Ug\zjprog\jasmine\src\fixed\AgedBrieItem.js
+C:\ug\zjprog-kata\jasmine\src\fixed\AgedBrieItem.js
 
-Physical LOC: 17
-Logical LOC: 1
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 100%
-Maintainability index: 162.61472146706737
-Dependency count: 0
+    Physical LOC: 18
+    Logical LOC: 1
+    Mean parameter count: 0
+    Cyclomatic complexity: 1
+    Cyclomatic complexity density: 100%
+    Maintainability index: 162.61472146706737
+    Dependency count: 0
 
-C:\Ug\zjprog\jasmine\src\fixed\BackstagePassItem.js
+C:\ug\zjprog-kata\jasmine\src\fixed\BackstagePassItem.js
 
-Physical LOC: 26
-Logical LOC: 1
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 100%
-Maintainability index: 162.61472146706737
-Dependency count: 0
+    Physical LOC: 26
+    Logical LOC: 1
+    Mean parameter count: 0
+    Cyclomatic complexity: 1
+    Cyclomatic complexity density: 100%
+    Maintainability index: 162.61472146706737
+    Dependency count: 0
 
-C:\Ug\zjprog\jasmine\src\fixed\ConjuredItem.js
+C:\ug\zjprog-kata\jasmine\src\fixed\ConjuredItem.js
 
-Physical LOC: 22
-Logical LOC: 1
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 100%
-Maintainability index: 162.61472146706737
-Dependency count: 0
+    Physical LOC: 22
+    Logical LOC: 1
+    Mean parameter count: 0
+    Cyclomatic complexity: 1
+    Cyclomatic complexity density: 100%
+    Maintainability index: 162.61472146706737
+    Dependency count: 0
 
-C:\Ug\zjprog\jasmine\src\fixed\GildedRose.js
+C:\ug\zjprog-kata\jasmine\src\fixed\GildedRose.js
 
-Physical LOC: 26
-Logical LOC: 4
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 25%
-Maintainability index: 129.56423828475548
-Dependency count: 1
+    Physical LOC: 27
+    Logical LOC: 4
+    Mean parameter count: 0
+    Cyclomatic complexity: 1
+    Cyclomatic complexity density: 25%
+    Maintainability index: 129.56423828475548
+    Dependency count: 1
 
-C:\Ug\zjprog\jasmine\src\fixed\Item.js
+C:\ug\zjprog-kata\jasmine\src\fixed\ItemFactory.js
 
-Physical LOC: 9
-Logical LOC: 1
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 100%
-Maintainability index: 162.61472146706737
-Dependency count: 0
+    Physical LOC: 23
+    Logical LOC: 6
+    Mean parameter count: 0
+    Cyclomatic complexity: 1
+    Cyclomatic complexity density: 16.666666666666664%
+    Maintainability index: 121.70073619366497
+    Dependency count: 5
 
-C:\Ug\zjprog\jasmine\src\fixed\ItemFactory.js
+C:\ug\zjprog-kata\jasmine\src\fixed\RegularItem.js
 
-Physical LOC: 23
-Logical LOC: 6
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 16.666666666666664%
-Maintainability index: 121.70073619366497
-Dependency count: 5
+    Physical LOC: 22
+    Logical LOC: 1
+    Mean parameter count: 0
+    Cyclomatic complexity: 1
+    Cyclomatic complexity density: 100%
+    Maintainability index: 162.61472146706737
+    Dependency count: 0
 
-C:\Ug\zjprog\jasmine\src\fixed\RegularItem.js
+C:\ug\zjprog-kata\jasmine\src\fixed\SulfurasItem.js
 
-Physical LOC: 22
-Logical LOC: 1
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 100%
-Maintainability index: 162.61472146706737
-Dependency count: 0
+    Physical LOC: 16
+    Logical LOC: 1
+    Mean parameter count: 0
+    Cyclomatic complexity: 1
+    Cyclomatic complexity density: 100%
+    Maintainability index: 162.61472146706737
+    Dependency count: 0
 
-C:\Ug\zjprog\jasmine\src\fixed\SulfurasItem.js
-
-Physical LOC: 15
-Logical LOC: 1
-Mean parameter count: 0
-Cyclomatic complexity: 1
-Cyclomatic complexity density: 100%
-Maintainability index: 162.61472146706737
-Dependency count: 0
                         </pre>
                         <p>Raport:</p>
                         <a href="assets/files/report-fixed/index.html" target="_blank">Plato raport fixed</a>
                         <p>Lines of code: 161 - więcej(gorzej)</p>
                         <p>Logical lines of code: 2 - mniej(gorzej)</p>
-                        <p>Halstead effort: 87.74344377691465 - mniej(lepiej)</p>
-                        <p>Maintainability index: 153.36916291010306 - więcej(lepiej)</p>
-                        <p>Change cost: 12.5% - mniej(lepiej) 8 plików</p>
+                        <p>Halstead effort: 98.61970139155434 - mniej(lepiej)</p>
+                        <p>Maintainability index: 152.04836883053673 - więcej(lepiej)</p>
+                        <p>Change cost: 14.2% - mniej(lepiej) 7 plików</p>
                         <p>Cyclomatic complexity: 1 - tyle samo</p>
                         <p>Plato - Maintainability: 72.12 - więcej(lepiej)</p>
                     </li>

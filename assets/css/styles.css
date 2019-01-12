@@ -48,3 +48,9 @@ pre.prettyprint {
     overflow-x: scroll;
     font-size: 16px;
 }
+
+li.small {
+    list-style-type: disc;
+    margin: .5em 2em;
+    font-size: 18px;
+}
